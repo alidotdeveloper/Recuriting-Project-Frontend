@@ -1,27 +1,23 @@
 const express = require("express");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-const multer = require("multer");
 const cors = require("cors");
 require("dotenv").config();
+const bodyparser = require("body-parser");
 const app = express();
+const login = require("./routes/login");
+
+app.use(express.json());
 app.use(cors());
 
-app.use("/", (req, res) => {
-  res.send("hello");
+app.use(bodyparser.json());
+
+app.get("/", (req, res) => {
+  res.send("hello from server");
 });
 
-async function db() {
-  const user = await prisma.user.create({
-    data: {
-      email: "a@gmail.com",
-      password: "aliert",
-      role: "Admin",
-    },
-  });
-  console.log("User created:", user);
-}
-db();
+//middleware
+app.use("/api/login", login);
 
-const PORT = 8080;
-app.listen(PORT, console.log(`working on : ${PORT}`));
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
