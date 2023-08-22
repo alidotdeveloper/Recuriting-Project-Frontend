@@ -3,7 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const bodyparser = require("body-parser");
 const app = express();
-const login = require("./routes/login");
+const login = require("./routes/login-route");
 
 app.use(express.json());
 app.use(cors());
@@ -16,6 +16,7 @@ app.get("/", (req, res) => {
 
 //middleware
 app.use("/api/login", login);
+app.use("/api/signup", login);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
