@@ -18,9 +18,11 @@ const login = async (req, res) => {
     }
 
     if (user.password === password) {
-      res.status(200).json({ message: "Login successful", role: user.role });
+      res
+        .status(200)
+        .json({ status: "ok", message: "Login successful", role: user.role });
     } else {
-      res.status(401).json({ error: "Invalid credentials" });
+      res.status(200).json({ status: "no", message: "Invalid credentials" });
     }
   } catch (err) {
     console.error("Error:", err);
