@@ -4,19 +4,15 @@ require("dotenv").config();
 const bodyparser = require("body-parser");
 const app = express();
 const login = require("./routes/login-route");
-
+const signup = require("./routes/signup-route");
 app.use(express.json());
 app.use(cors());
 
 app.use(bodyparser.json());
 
-app.get("/", (req, res) => {
-  res.send("hello from server");
-});
-
 //middleware
 app.use("/api/login", login);
-app.use("/api/signup", login);
+app.use("/api/signup", signup);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
