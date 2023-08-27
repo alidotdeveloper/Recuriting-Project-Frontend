@@ -1,21 +1,23 @@
 const { PrismaClient, Role } = require("@prisma/client");
 const prisma = new PrismaClient();
-
+const argon2 = require("argon2");
 const signup = async (req, res) => {
   try {
     const { email, password, username } = req.body;
     console.log(email, password, username);
+    const hash = await argon2.hash(password);
 
     const user = await prisma.user.create({
       data: {
         email: email,
-        password: password,
+        password: hash,
         role: "Admin",
         username: username,
       },
     });
-
-    console.log("user account created", user);
+    if (!email | !password | !username) {
+      return res.json({ message: "all field required" });
+    }
     return res.json({
       message: `Congrats! ${user.username} your account has been created`,
     });

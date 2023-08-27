@@ -1,9 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const argon2 = require("argon2");
 
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const hash = await argon2.hash(password);
 
     const user = await prisma.user.findUnique({
       where: { email },
@@ -17,7 +19,7 @@ const login = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (user.password === password) {
+    if (await argon2.verify(user.password, password)) {
       res
         .status(200)
         .json({ status: "ok", message: "Login successful", role: user.role });
