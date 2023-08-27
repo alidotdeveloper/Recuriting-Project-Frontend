@@ -21,4 +21,5 @@ model user {
   email    String @unique
   password String
   role     Role
+  username String @unique
 }

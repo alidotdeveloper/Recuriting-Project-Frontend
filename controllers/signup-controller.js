@@ -1,22 +1,26 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, Role } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const signup = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { email, password, username } = req.body;
+    console.log(email, password, username);
 
     const user = await prisma.user.create({
       data: {
-        username: username,
         email: email,
         password: password,
+        role: "Admin",
+        username: username,
       },
     });
-    console.log(user);
+
+    console.log("user account created", user);
     return res.json({
-      message: "account has been created",
+      message: `Congrats! ${user.username} your account has been created`,
     });
   } catch (error) {
+    console.log("there is an issue with prisma");
     return res.json({
       error: error,
     });

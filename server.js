@@ -6,6 +6,7 @@ const app = express();
 const login = require("./routes/login-route");
 const signup = require("./routes/signup-route");
 app.use(express.json());
+
 app.use(cors());
 
 app.use(bodyparser.json());
