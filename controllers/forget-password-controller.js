@@ -16,45 +16,49 @@ const forgetPassword = async (req, res) => {
       },
     });
 
-    if (!email) {
-      return res.status(404).json({ error: "email not found" });
+    if (!user) {
+      return res.status(200).json({ message: "Invalid Credentials" });
     }
-    if (email) {
-      jwt.sign(
-        { user: user.id },
-        "secretkey",
-        { expiresIn: "60s" },
-        (err, token) => {
-          if (err) {
-            console.error("JWT Error:", err);
-            return res.status(500).json({ error: "JWT error" });
-          }
 
-          var transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            auth: {
-              user: process.env.EMAIL_USER,
-              pass: process.env.EMAIL_PASSWORD,
-            },
-          });
-
-          var mailOptions = {
-            from: "alihassnain330@gmail.com",
-            to: "hillard.bradtke80@ethereal.email",
-            subject: "Here is your link to reset passowrd",
-            text: `http://localhost:3000/forget-password/${user.id}?token=${token}`,
-          };
-          transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-              console.log(error);
-            } else {
-              console.log("Email sent: " + info.response);
-            }
-          });
+    jwt.sign(
+      { user: user.id },
+      "secretkey",
+      { expiresIn: "60s" },
+      (err, token) => {
+        if (err) {
+          console.error("JWT Error:", err);
+          return res.status(500).json({ error: "JWT error" });
         }
-      );
-    }
+
+        var transporter = nodemailer.createTransport({
+          host: "smtp.ethereal.email",
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD,
+          },
+        });
+
+        var mailOptions = {
+          from: "alihassnain330@gmail.com",
+          to: "krystina53@ethereal.email",
+          subject: "Here is your link to reset password",
+          text: `http://localhost:3000/forget-password/${user.id}?token=${token}`,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        });
+
+        // Send success response outside of the sendMail callback
+        res.status(200).json({ message: "Email sent successfully" });
+      }
+    );
   } catch (err) {
     console.error("Error:", err);
     res.status(500).json({ error: "An error occurred" });
