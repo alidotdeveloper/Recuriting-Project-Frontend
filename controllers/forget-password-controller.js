@@ -3,18 +3,28 @@ const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
 require("dotenv").config();
+const { v4: uuidv4 } = require("uuid");
+
+// Generate a new UUID
 
 const forgetPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await prisma.user.findUnique({
+    const token = uuidv4();
+    const user = await prisma.user.update({
       where: {
         email: email,
       },
+      data: {
+        token: token,
+        createdAt: new Date(),
+      },
       select: {
         id: true,
+        token: true,
       },
     });
+    console.log("Reset token saved:", user.token);
 
     if (!user) {
       return res.status(200).json({ message: "Invalid Credentials" });
@@ -31,18 +41,16 @@ const forgetPassword = async (req, res) => {
         }
 
         var transporter = nodemailer.createTransport({
-          host: "smtp.ethereal.email",
-          port: 587,
-          secure: false,
+          service: "gmail",
           auth: {
             user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD,
+            pass: process.env.EMAIL_PASS,
           },
         });
 
         var mailOptions = {
-          from: "alihassnain330@gmail.com",
-          to: "krystina53@ethereal.email",
+          from: "alidotdeveloper@gmail.com",
+          to: "alihassnain330@gmail.com",
           subject: "Here is your link to reset password",
           text: `http://localhost:3000/forget-password/${user.id}?token=${token}`,
         };
