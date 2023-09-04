@@ -5,8 +5,6 @@ var nodemailer = require("nodemailer");
 require("dotenv").config();
 const { v4: uuidv4 } = require("uuid");
 
-// Generate a new UUID
-
 const forgetPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -47,12 +45,12 @@ const forgetPassword = async (req, res) => {
             pass: process.env.EMAIL_PASS,
           },
         });
-
+        const storedToken = `http://localhost:3000/new-password/${user.id}?token=${token}`;
         var mailOptions = {
           from: "alidotdeveloper@gmail.com",
           to: "alihassnain330@gmail.com",
           subject: "Here is your link to reset password",
-          text: `http://localhost:3000/forget-password/${user.id}?token=${token}`,
+          text: storedToken,
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
