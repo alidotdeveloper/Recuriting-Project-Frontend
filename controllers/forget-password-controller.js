@@ -45,7 +45,7 @@ const forgetPassword = async (req, res) => {
             pass: process.env.EMAIL_PASS,
           },
         });
-        const storedToken = `http://localhost:3000/new-password/${user.id}?token=${token}`;
+        const storedToken = `http://localhost:3000/new-password/${user.id}/${token}`;
         var mailOptions = {
           from: "alidotdeveloper@gmail.com",
           to: "alihassnain330@gmail.com",
