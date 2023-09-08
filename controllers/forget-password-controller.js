@@ -3,36 +3,27 @@ const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
 require("dotenv").config();
-const { v4: uuidv4 } = require("uuid");
 
 const forgetPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const token = uuidv4();
-    const user = await prisma.user.update({
+    // db from prisma
+    const juser = await prisma.user.findUnique({
+      select: {
+        id: true,
+      },
       where: {
         email: email,
       },
-      data: {
-        token: token,
-        createdAt: new Date(),
-      },
-      select: {
-        id: true,
-        token: true,
-      },
     });
-    console.log("Reset token saved:", user.token);
 
-    if (!user) {
-      return res.status(200).json({ message: "Invalid Credentials" });
-    }
+    // creating jwt token here
 
     jwt.sign(
-      { user: user.id },
+      { user: juser.id },
       "secretkey",
-      { expiresIn: "60s" },
-      (err, token) => {
+      { expiresIn: "60min" },
+      async (err, jtoken) => {
         if (err) {
           console.error("JWT Error:", err);
           return res.status(500).json({ error: "JWT error" });
@@ -45,13 +36,37 @@ const forgetPassword = async (req, res) => {
             pass: process.env.EMAIL_PASS,
           },
         });
-        const storedToken = `http://localhost:3000/new-password/${user.id}/${token}`;
+        console.log("your token is: " + jtoken);
+
+        const storedToken = `http://localhost:3000/new-password/${juser.id}/${jtoken}`;
+
+        await prisma.user.update({
+          where: {
+            email: email,
+          },
+          data: {
+            token: jtoken,
+            createdAt: new Date(),
+          },
+          select: {
+            id: true,
+            token: true,
+          },
+        });
+        //console.log("Reset token saved:" + user);
+
+        // if (!user) {
+        //   return res.status(200).json({ message: "Invalid Credentials" });
+        // }
+
         var mailOptions = {
           from: "alidotdeveloper@gmail.com",
           to: "alihassnain330@gmail.com",
           subject: "Here is your link to reset password",
           text: storedToken,
         };
+
+        console.log(storedToken);
 
         transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
