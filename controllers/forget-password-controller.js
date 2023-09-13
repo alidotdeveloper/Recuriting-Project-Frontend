@@ -53,17 +53,12 @@ const forgetPassword = async (req, res) => {
             token: true,
           },
         });
-        //console.log("Reset token saved:" + user);
-
-        // if (!user) {
-        //   return res.status(200).json({ message: "Invalid Credentials" });
-        // }
 
         var mailOptions = {
           from: "alidotdeveloper@gmail.com",
-          to: "alihassnain330@gmail.com",
+          to: email,
           subject: "Here is your link to reset password",
-          text: storedToken,
+          html: `<p>You can reset the password by clicking on this button:</p><a href="${storedToken}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">Reset Password</a>`,
         };
 
         console.log(storedToken);

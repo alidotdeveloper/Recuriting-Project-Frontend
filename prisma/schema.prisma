@@ -24,4 +24,6 @@ model user {
   token     String?   @unique
   createdAt DateTime? @default(now())
   username  String    @unique
+
+  @@unique([id, token])
 }
