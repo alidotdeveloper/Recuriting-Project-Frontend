@@ -11,7 +11,7 @@ const signup = async (req, res) => {
       data: {
         email: email,
         password: hash,
-        role: "Admin",
+        role: Role,
         username: username,
       },
     });

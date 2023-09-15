@@ -14,12 +14,18 @@ const login = async (req, res) => {
         role: true,
       },
     });
-
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(200).json({ error: "invalid user" });
     }
 
-    if (await argon2.verify(user.password, password)) {
+    if (user.password != password) {
+      return res.status(200).json({ error: "password not match" });
+    }
+    if (!password) {
+      return res.status(200).json({ error: "password should not be empty" });
+    }
+
+    if (await argon2.verify(hash, password)) {
       res
         .status(200)
         .json({ status: "ok", message: "Login successful", role: user.role });
