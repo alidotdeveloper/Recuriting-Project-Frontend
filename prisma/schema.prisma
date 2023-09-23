@@ -23,7 +23,7 @@ model user {
   role      Role
   token     String?   @unique
   createdAt DateTime? @default(now())
-  username  String    @unique
+  username  String?   @unique
 
   @@unique([id, token])
 }

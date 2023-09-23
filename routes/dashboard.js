@@ -3,6 +3,7 @@ const router = express.Router();
 
 const dashboard = require("../controllers/show-user");
 
-router.post("/", dashboard);
+router.get("/", dashboard.showuser);
+router.get("/:userId", dashboard.updateduser);
 
 module.exports = router;
