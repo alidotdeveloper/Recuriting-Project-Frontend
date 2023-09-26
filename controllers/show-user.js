@@ -3,6 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 //show user api
+
 const showuser = async (req, res) => {
   try {
     const user = await prisma.user.findMany({});
@@ -14,7 +15,10 @@ const showuser = async (req, res) => {
 
 // update user
 const updateduser = async (req, res) => {
-  const { email, password, role, username } = req.body;
+  const { userId, email, password, role, username } = req.params;
+
+  console.log("value of id is : " + userId + username);
+  console.log("value of username is : " + role);
   try {
     const updatedUser = await prisma.user.update({
       data: {
@@ -23,8 +27,8 @@ const updateduser = async (req, res) => {
         role: role,
         username: username,
       },
-      select: {
-        id: true,
+      where: {
+        id: userId,
       },
     });
     if (updatedUser) {

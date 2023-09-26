@@ -9,6 +9,7 @@ const signup = require("./routes/signup-route");
 const forgetPassword = require("./routes/forget-route");
 const newpassword = require("./routes/new-password");
 const showuser = require("./routes/dashboard");
+
 app.use(express.json());
 app.use(cors());
 app.use(bodyparser.json());
