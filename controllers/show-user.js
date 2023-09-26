@@ -17,8 +17,6 @@ const showuser = async (req, res) => {
 const updateduser = async (req, res) => {
   const { userId, email, password, role, username } = req.params;
 
-  console.log("value of id is : " + userId + username);
-  console.log("value of username is : " + role);
   try {
     const updatedUser = await prisma.user.update({
       data: {
