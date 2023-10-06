@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const argon2 = require("argon2");
+const jwt = require("jsonwebtoken");
 
 const login = async (req, res) => {
   try {
@@ -14,6 +15,14 @@ const login = async (req, res) => {
         role: true,
       },
     });
+
+    const genratedToken = jwt.sign({ user: user.id }, "secretkey");
+    async (err, genratedToken) => {
+      if (err) {
+        console.log("error in genrating token");
+      }
+    };
+
     if (!user) {
       return res.status(200).json({ error: "invalid user" });
     }
