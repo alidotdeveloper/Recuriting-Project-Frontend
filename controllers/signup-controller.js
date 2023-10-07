@@ -12,13 +12,13 @@ const signup = async (req, res) => {
       return res.json({ message: "all field required" });
     }
 
-    // const hash = await argon2.hash(password);
+    const hash = await argon2.hash(password);
     console.log(role);
-    // generatuing user
+    // generating user
     const user = await prisma.user.create({
       data: {
         email: email,
-        password: password,
+        password: hash,
         role: role,
         username: username,
       },
