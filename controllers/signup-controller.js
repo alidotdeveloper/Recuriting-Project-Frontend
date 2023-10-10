@@ -13,7 +13,7 @@ const signup = async (req, res) => {
     }
 
     const hash = await argon2.hash(password);
-    console.log(role);
+
     // generating user
     const user = await prisma.user.create({
       data: {
@@ -34,6 +34,13 @@ const signup = async (req, res) => {
       },
     });
 
+    const expirationDate = new Date(Date.now() + 2589200000); // Set the expiration time 30 days in the future
+    const cookies = res.cookie("jwt", generatedToken, {
+      expires: expirationDate,
+      httpOnly: true,
+    });
+    console.log(cookies);
+
     if (updateduser) {
       return res.json({
         message: `Congrats! ${user.username} your account has been created`,
@@ -44,8 +51,8 @@ const signup = async (req, res) => {
     }
   } catch (error) {
     console.log("got error in catch");
-    return res.json({
-      error: error,
+    return res.status(500).json({
+      error: error.message,
     });
   }
 };

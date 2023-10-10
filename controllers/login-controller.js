@@ -14,6 +14,12 @@ const login = async (req, res) => {
         role: true,
       },
     });
+    const expirationDate = new Date(Date.now() + 2589200000); // Set the expiration time 30 days in the future
+    const cookies = res.cookie("jwt", "generatedToken", {
+      expires: expirationDate,
+      httpOnly: true,
+    });
+    console.log(cookies);
 
     if (!user) {
       return res.status(200).json({ error: "invalid user" });

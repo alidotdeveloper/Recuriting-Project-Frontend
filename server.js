@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const bodyparser = require("body-parser");
 const app = express();
@@ -12,7 +12,7 @@ const showuser = require("./routes/dashboard");
 
 app.use(express.json());
 app.use(cors());
-app.use(bodyparser.json());
+app.use(cookieParser());
 
 //middleware
 app.use("/api/login", login);
