@@ -10,16 +10,11 @@ const login = async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
+        id: true,
         password: true,
         role: true,
       },
     });
-    const expirationDate = new Date(Date.now() + 2589200000); // Set the expiration time 30 days in the future
-    const cookies = res.cookie("jwt", "generatedToken", {
-      expires: expirationDate,
-      httpOnly: true,
-    });
-    console.log(cookies);
 
     if (!user) {
       return res.status(200).json({ error: "invalid user" });
@@ -28,15 +23,24 @@ const login = async (req, res) => {
       return res.status(200).json({ error: "password should not be empty" });
     }
     if (await argon2.verify(user.password, password)) {
-      res
-        .status(200)
-        .json({ status: "ok", message: "Login successful", role: user.role });
+      const token = jwt.sign(
+        { user: user.id.toString() },
+        process.env.SECURITY_KEY
+      );
+      res.cookie("jwtlogin", token);
+      res.status(200).json({
+        status: "ok",
+        message: "Login successful",
+        role: user.role,
+      });
     } else {
-      res.status(200).json({ status: "no", message: "Invalid credentials" });
+      console.log("soory it's not working");
     }
   } catch (err) {
     console.error("Error:", err);
-    res.status(500).json({ error: "An error occurred" });
+    res
+      .status(500)
+      .json({ error: "An error occurred while lohin and setting cookie" });
   }
 };
 

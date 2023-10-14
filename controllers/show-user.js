@@ -7,9 +7,10 @@ const prisma = new PrismaClient();
 const showuser = async (req, res) => {
   try {
     const user = await prisma.user.findMany({});
+
     return res.status(200).json(user);
   } catch (err) {
-    return res.status(500).json({ error: "got error in catch" });
+    return res.status(500).json({ error: "got error in catch in display" });
   }
 };
 

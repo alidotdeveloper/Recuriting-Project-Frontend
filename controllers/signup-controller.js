@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const signup = async (req, res) => {
   try {
@@ -24,30 +25,31 @@ const signup = async (req, res) => {
       },
     });
 
-    const generatedToken = jwt.sign({ user: user.id.toString() }, "secretkey");
+    const token = jwt.sign(
+      { user: user.id.toString() },
+      process.env.SECURITY_KEY
+    );
+
     const updateduser = await prisma.user.update({
       where: {
         id: user.id,
       },
       data: {
-        token: generatedToken,
+        token: token,
       },
     });
 
-    const expirationDate = new Date(Date.now() + 2589200000); // Set the expiration time 30 days in the future
-    const cookies = res.cookie("jwt", generatedToken, {
-      expires: expirationDate,
-      httpOnly: true,
-    });
-    console.log(cookies);
-
     if (updateduser) {
-      return res.json({
-        message: `Congrats! ${user.username} your account has been created`,
-        token: generatedToken,
+      res.cookie("jwtcookie", token);
+
+      res.on("finish", () => {
+        console.log("Cookie generated and sent");
+      });
+      res.status(200).json({
+        message: "user created",
       });
     } else {
-      return res.status(500).json({ message: "internal server error" });
+      console.log("User is not updated");
     }
   } catch (error) {
     console.log("got error in catch");
