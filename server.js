@@ -10,7 +10,8 @@ const login = require("./routes/login-route");
 const signup = require("./routes/signup-route");
 const forgetPassword = require("./routes/forget-route");
 const newpassword = require("./routes/new-password");
-const showuser = require("./routes/dashboard");
+const dashboard = require("./routes/dashboard");
+const signout = require("./routes/signout-route");
 
 const corsOptions = {
   origin: "http://localhost:3000",
@@ -25,11 +26,12 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 
 //middleware
-app.use("/api/login", auth, login);
-app.use("/api/signup", auth, signup);
+app.use("/api/login", login);
+app.use("/api/signup", signup);
 app.use("/api/forgetpassword", forgetPassword);
 app.use("/", newpassword);
-app.use("/api/showuser", showuser);
+app.use("/api/showuser", dashboard);
+app.use("/api/signout", auth, signout);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

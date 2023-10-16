@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
-
+const jwt = require("jsonwebtoken");
 //show user api
 
 const showuser = async (req, res) => {
@@ -67,4 +67,18 @@ const deleteuser = async (req, res) => {
   }
 };
 
-module.exports = { showuser, updateduser, deleteuser };
+// Signout user
+const signout = async (req, res) => {
+  try {
+    const clearcookie = res.clearCookie("jwtlogin");
+    if (clearcookie) {
+      console.log("cookie clear successfully");
+      return res.status(200).json({ message: "cookie clear successfully" });
+    }
+  } catch (err) {
+    console.log("getting error in catch" + err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { showuser, updateduser, deleteuser, signout };

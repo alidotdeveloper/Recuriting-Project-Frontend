@@ -22,16 +22,19 @@ const login = async (req, res) => {
     if (!password) {
       return res.status(200).json({ error: "password should not be empty" });
     }
+
     if (await argon2.verify(user.password, password)) {
       const token = jwt.sign(
         { user: user.id.toString() },
         process.env.SECURITY_KEY
       );
       res.cookie("jwtlogin", token);
+
       res.status(200).json({
         status: "ok",
         message: "Login successful",
         role: user.role,
+        auth: token,
       });
     } else {
       console.log("soory it's not working");
